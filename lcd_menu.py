@@ -20,8 +20,9 @@ class LCDMenu:
 
     def button_callback(self, pin):
         # Callback function for button press
-        print("pressed")
-        self.encoder_button_pressed = True
+        if self.encoder_button_pressed == False:
+            print("pressed button")
+            self.encoder_button_pressed = True
 
     def initialize_lcd(self):
         # Initialize and clear the LCD display
@@ -77,10 +78,12 @@ class LCDMenu:
                 if callback:
                     callback()
 
-            # Reset the button state
-            self.encoder_button_pressed = False
-
-            #await asyncio.sleep_ms(1)  # Adjust the delay as needed
+            if self.encoder_button_pressed == True:
+                await asyncio.sleep_ms(200)  # Adjust the delay as needed
+                # Reset the button state
+                self.encoder_button_pressed = False
+            
+            
 
     def run(self):
         # Start the navigation loop
