@@ -40,6 +40,8 @@ class LcdApi:
     LCD_CGRAM = 0x40            # DB6: set CG RAM address
     LCD_DDRAM = 0x80            # DB7: set DD RAM address
 
+    LCD_ENTRY_SHIFT = 0x01  # DB0: shift (enable automatic display shift)
+    
     LCD_RS_CMD = 0
     LCD_RS_DATA = 1
 
@@ -199,3 +201,4 @@ class LcdApi:
     def hal_sleep_us(self, usecs):
         """Sleep for some time (given in microseconds)."""
         time.sleep_us(usecs)
+

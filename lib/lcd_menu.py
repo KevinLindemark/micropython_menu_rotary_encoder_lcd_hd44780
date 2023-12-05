@@ -83,8 +83,6 @@ class LCDMenu:
                 # Reset the button state
                 self.encoder_button_pressed = False
             
-            
-
     def run(self):
         # Start the navigation loop
         loop = asyncio.get_event_loop()

@@ -1,9 +1,6 @@
-# https://rfzero.net/tutorials/rotary-encoder/
-
 from machine import Pin
 from time import ticks_ms
 
-# TODO lav klasse til rotary encoder
 class RotaryEncoder:
     def __init__(self, pin_enc_a = 36, pin_enc_b = 39):
         self.__rotenc_a = Pin(pin_enc_a, Pin.IN, Pin.PULL_UP)
