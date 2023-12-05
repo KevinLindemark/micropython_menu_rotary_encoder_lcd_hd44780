@@ -7,26 +7,30 @@ class LCDMenu:
         self.lcd = lcd
         self.encoder = encoder
         self.button = button
+        
         self.menu_items = []  # A list to store menu items
-        self.current_menu = 0  # Index of the current menu
-        self.selected_item = 0  # Index of the selected item in the current menu
-
+        self.line = 1  # Index of the current menu
+        self.highlight = 1  # Index of the selected item in the current menu
+        self.shift = 0
+        self.list_length = 0
+        self.total_lines = 4
+        self.selected_item = 0
+         
         self.encoder_last_state = None  # Store the last state of the encoder
         self.encoder_button_pressed = False  # Flag to track button press
 
         self.initialize_lcd()
         self.initialize_encoder()
         self.initialize_button()
-
+    # todo
+        # callback needs to follow with selected item
     def button_callback(self, pin):
         # Callback function for button press
         if self.encoder_button_pressed == False:
-            print("pressed button")
             self.encoder_button_pressed = True
 
     def initialize_lcd(self):
         # Initialize and clear the LCD display
-        #self.lcd.init()
         self.lcd.clear()
         self.lcd.move_to(0, 0)
 
@@ -44,37 +48,57 @@ class LCDMenu:
 
     def display_menu(self):
         # Display the current menu
+        print(f"shift {self.highlight}")
         self.lcd.clear()
-        
-        for selected in range(len(self.menu_items)):
-            self.lcd.move_to(1, selected)
-            self.lcd.putstr(self.menu_items[selected]["text"])
-        self.lcd.move_to(0, self.selected_item)
-        self.lcd.blink_cursor_on()
+        self.item = 1
+        self.line = 1
+        self.list_length = len(self.menu_items) # self.shift the list of files so that it shows on the display
+        short_list = self.menu_items[self.shift:self.shift+self.total_lines]
+                
+        for item in short_list:
+            #print(item)
+            if self.highlight == self.line:
+                self.lcd.move_to(1, self.line-1)
+                self.lcd.putstr(item["text"])
+                self.selected = self.line-1
+                
+            else:
+                
+                self.lcd.move_to(1, self.line-1)
+                self.lcd.putstr(item["text"])
             
+            self.line += 1
+            self.lcd.move_to(0, self.selected)
+            self.lcd.blink_cursor_on()
+    
     def navigate_menu(self):
         while True:
             # Read the current state of the encoder
-            encoder_state = self.encoder.re_full_step()
-            #print(encoder_state)
-            # Check for clockwise rotation
-            if encoder_state == 1:
-                self.selected_item = (self.selected_item + 1) % len(self.menu_items)
-                print("Selected item: ", self.selected_item)
+            res = self.encoder.re_full_step()
+            if res == -1:  # Turned Left 
+                if self.highlight > 1:
+                    self.highlight -= 1  
+                else:
+                    if self.shift > 0:
+                        self.shift -= 1
                 self.display_menu()
-            # Check for counterclockwise rotation
-            elif encoder_state == -1:
-                self.selected_item = (self.selected_item - 1) % len(self.menu_items)
-                print("Selected item: ", self.selected_item)
-            # Update the LCD display
+                #show_menu(file_list)
+                
+            if res == 1:    # Turned Right
+                if self.highlight < self.total_lines:
+                    self.highlight += 1
+                else: 
+                    if self.shift+self.total_lines < self.list_length:
+                       self.shift += 1
+
                 self.display_menu()
 
             # Update the last state of the encoder
-            self.encoder_last_state = encoder_state
+            self.encoder_last_state = res
 
             # Check if the button is pressed
             if self.encoder_button_pressed:
-                callback = self.menu_items[self.selected_item]["callback"]
+                callback = self.menu_items[self.selected+self.shift]["callback"]
                 if callback:
                     callback()
 
