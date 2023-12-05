@@ -22,8 +22,7 @@ class LCDMenu:
         self.initialize_lcd()
         self.initialize_encoder()
         self.initialize_button()
-    # todo
-        # callback needs to follow with selected item
+
     def button_callback(self, pin):
         # Callback function for button press
         if self.encoder_button_pressed == False:
@@ -98,12 +97,12 @@ class LCDMenu:
 
             # Check if the button is pressed
             if self.encoder_button_pressed:
-                callback = self.menu_items[self.selected+self.shift]["callback"]
+                callback = self.menu_items[self.selected+self.shift]["callback"] # add shift to selected to get correct callback
                 if callback:
                     callback()
 
             if self.encoder_button_pressed == True:
-                await asyncio.sleep_ms(200)  # Adjust the delay as needed
+                await asyncio.sleep_ms(200)  # Adjust the debounce delay as needed
                 # Reset the button state
                 self.encoder_button_pressed = False
             
