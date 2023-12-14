@@ -67,7 +67,7 @@ class LCDMenu:
             self.lcd.move_to(0, self.selected)
             self.lcd.blink_cursor_on()
 
-    def navigate_menu(self):
+    async def navigate_menu(self):
         """Navigate menu system"""
         while True:
             # Read the current state of the encoder
